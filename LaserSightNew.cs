@@ -12,8 +12,6 @@ using Terraria.Graphics; // graphics
 using Terraria.ID; // id
 using Terraria.GameInput; // hotkey
 using System.Reflection; // reflection ( no way)
-using Microsoft.Win32.sagaso;
-
 
 namespace LaserSightNew
 {
@@ -42,16 +40,21 @@ namespace LaserSightNew
 	
 	class LaserSight : ModWorld
 	{
-		//hitmark , the index of targeted enemy
-		public static int hitmark = -1;
-		public override void PostDrawTiles ()
+		//player.GetModPlayer<LaserToggle>().hitmark , the index of targeted enemy
+		public override void PostDrawTiles() {
+			for (int i = 0; i < Main.maxPlayers; i++)
+			{
+				DrawPlayerLaser(Main.player[i]);
+			}
+		}
+		public void DrawPlayerLaser (Player player)
 		{
-			string popo = $"popo {hitmark}";
-			Player player = Main.LocalPlayer;
+			//dont run on ded or unactive player
+			if (player.active || player.dead) {return;}
 			// have laser scope to make it a bit balanced i guess
 			if (!Main.gamePaused && LaserConfig.get.laserEnabled && ((player.scope && LaserConfig.get.laserScope) || !LaserConfig.get.laserScope))
 			{
-				if (player.active && !player.dead && player.HeldItem.ranged || LaserConfig.get.anyWeap)
+				if (player.HeldItem.ranged || LaserConfig.get.anyWeap)
 				{
 					/*
 
@@ -80,14 +83,14 @@ namespace LaserSightNew
 					// color setup
 					Color color = (LaserConfig.get.laserDisco ? Main.DiscoColor : LaserConfig.get.laserColor);
 
-					// if npc is gone , set hitmark to -1 
-					if (hitmark > -1 && !Main.npc[hitmark].active) {hitmark = -1;}
+					// if npc is gone , set player.GetModPlayer<LaserToggle>().hitmark to -1 
+					if (player.GetModPlayer<LaserToggle>().hitmark > -1 && !Main.npc[player.GetModPlayer<LaserToggle>().hitmark].active) {player.GetModPlayer<LaserToggle>().hitmark = -1;}
 
 					// only accept valid index
-					if (LaserConfig.get.laserEnemy && hitmark > -1) {
+					if (LaserConfig.get.laserEnemy && player.GetModPlayer<LaserToggle>().hitmark > -1) {
 
 						//the npc
-						NPC npc = Main.npc[hitmark];
+						NPC npc = Main.npc[player.GetModPlayer<LaserToggle>().hitmark];
 
 						//start
 						Main.spriteBatch.Begin (SpriteSortMode.Deferred, null, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
@@ -100,7 +103,7 @@ namespace LaserSightNew
 						if (scale < 0f) {scale *= -1f;}
 						scale += 0.3f;
 
-						//draw the hitmark
+						//draw the player.GetModPlayer<LaserToggle>().hitmark
 						Main.spriteBatch.Draw(text, npc.Center - Main.screenPosition, null, color, 
 						MathHelper.ToRadians(Main.GameUpdateCount)*1.5f, text.Size()/2f, scale, SpriteEffects.None, 0);
 
@@ -151,7 +154,7 @@ namespace LaserSightNew
 							if ((closest || b == -1 ) && collide) {
 								b = i;
 								endPoint = npc.Center;
-								hitmark = i;
+								player.GetModPlayer<LaserToggle>().hitmark = i;
 							}
 						}
 					}
@@ -180,13 +183,13 @@ namespace LaserSightNew
 				}
 				// if player not holding other weapon, reset
 				else {
-					hitmark = -1;
+					player.GetModPlayer<LaserToggle>().hitmark = -1;
 				}
 				
 			}
 			// if disabled or game not runned , reset
 			else {
-				hitmark = -1;
+				player.GetModPlayer<LaserToggle>().hitmark = -1;
 			}
 			
 		}
@@ -247,6 +250,11 @@ namespace LaserSightNew
 		[DefaultValue(true)]
 		public bool laserEnabled;
 
+		[Label("Multiplayer Laser")]
+		[Tooltip("See other player laser")]
+		[DefaultValue(true)]
+		public bool multiplayerLaser;
+
 		[Label("Laser Distance Limit to mouse")]
 		[Tooltip("Limit laser length to mouse\nthis will ignore 'Laser Distance Limit'")]
 		[DefaultValue(false)]
@@ -304,7 +312,7 @@ namespace LaserSightNew
 		public bool laserDisco;
 	}
 	
-	/*public class HitmarkerColorData
+	/*public class player.GetModPlayer<LaserToggle>().hitmarkerColorData
 	{
 		[Header("Laser Color")]
 
