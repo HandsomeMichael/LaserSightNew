@@ -12,6 +12,7 @@ using Terraria.Graphics; // graphics
 using Terraria.ID; // id
 using Terraria.GameInput; // hotkey
 using System.Reflection; // reflection ( no way)
+using Microsoft.Win32.sagaso;
 
 
 namespace LaserSightNew
@@ -42,15 +43,15 @@ namespace LaserSightNew
 	class LaserSight : ModWorld
 	{
 		//hitmark , the index of targeted enemy
-
 		public static int hitmark = -1;
 		public override void PostDrawTiles ()
 		{
+			string popo = $"popo {hitmark}";
 			Player player = Main.LocalPlayer;
 			// have laser scope to make it a bit balanced i guess
 			if (!Main.gamePaused && LaserConfig.get.laserEnabled && ((player.scope && LaserConfig.get.laserScope) || !LaserConfig.get.laserScope))
 			{
-				if (player.HeldItem.ranged || LaserConfig.get.anyWeap)
+				if (player.active && !player.dead && player.HeldItem.ranged || LaserConfig.get.anyWeap)
 				{
 					/*
 
