@@ -1,0 +1,18 @@
+This mod is a descendant of an original mod with the same name with same features
+
+This mod adds a laser sight, which draws a line between character and mouse cursor
+
+The difference between this and the original mod is the different use of draw method, and has a configuration rather than a command
+
+Recommended mods to pair with this: [Terraria Overhaul] or [Daiyousei's Smooth Animations], could also be both
+
+Credits:
+Lasthue (Neko)     - for the code and ideas he gave, thank you so much!
+raydeejay (Author) - author of the original mod, this mod wouldn't exist if it weren't for him
+Starlight river ( Mod ) - for code reference
+
+Changelog:
+0.4 - Added config , new icon , added tile and enemy collison , added Laser Enemy Indicator
+0.3 - Laser now extends further
+0.2 - Added Configs. & Mod Icon
+0.1 - Mod Created
