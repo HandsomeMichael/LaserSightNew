@@ -12,6 +12,7 @@ using Terraria.Graphics; // graphics
 using Terraria.ID; // id
 using Terraria.GameInput; // hotkey
 using System.Reflection; // reflection ( no way)
+using Terraria.Graphics.Shaders; // shader
 
 namespace LaserSightNew
 {
@@ -57,8 +58,8 @@ namespace LaserSightNew
 					NPC npc = Main.npc[LaserSight.hitmark];
 					if (npc.active) {
 						Aim = true;
-						Main.mouseX = (int)(npc.Center.X - Main.screenPosition.X);
-						Main.mouseY = (int)(npc.Center.Y - Main.screenPosition.Y);
+						Main.mouseX = (int)(npc.Center.X + (npc.velocity.X*LaserConfig.get.laserEnemyPredict) - Main.screenPosition.X);
+						Main.mouseY = (int)(npc.Center.Y + (npc.velocity.Y*LaserConfig.get.laserEnemyPredict) - Main.screenPosition.Y);
 					}
 				}
 			}
@@ -67,15 +68,15 @@ namespace LaserSightNew
 	
 	class LaserSight : ModWorld
 	{
-		//hitmark , the index of targeted enemy
+		//hitmark , the index of targeted enemy asdsdsd
 		public static int hitmark;
 		public override void PostDrawTiles() {
 			if (LaserToggle.Aim) {
 				if (hitmark != -1) {
 					NPC npc = Main.npc[hitmark];
 					if (npc.active) {
-						Main.mouseX = (int)(npc.Center.X - Main.screenPosition.X);
-						Main.mouseY = (int)(npc.Center.Y - Main.screenPosition.Y);
+						Main.mouseX = (int)(npc.Center.X + (npc.velocity.X*LaserConfig.get.laserEnemyPredict) - Main.screenPosition.X);
+						Main.mouseY = (int)(npc.Center.Y + (npc.velocity.Y*LaserConfig.get.laserEnemyPredict) - Main.screenPosition.Y);
 					}
 				}
 			}
@@ -127,7 +128,20 @@ namespace LaserSightNew
 						NPC npc = Main.npc[hitmark];
 
 						//start
-						Main.spriteBatch.Begin (SpriteSortMode.Deferred, null, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+						// amongus sussy wussy
+						if (LaserConfig.get.laserDye != null && LaserConfig.get.laserDye.Type > 1) {
+							var shader = GameShaders.Armor.GetShaderIdFromItemId(LaserConfig.get.laserDye.Type);
+							if (shader != null) {
+								Main.spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+								GameShaders.Armor.Apply(shader, player, null);
+							}
+							else {
+								Main.spriteBatch.Begin (SpriteSortMode.Deferred, null, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);	
+							}
+						}
+						else {
+							Main.spriteBatch.Begin (SpriteSortMode.Deferred, null, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+						}
 
 						//texture
 						var text = ModContent.GetTexture("LaserSightNew/Cross");
@@ -138,7 +152,7 @@ namespace LaserSightNew
 						scale += 0.3f;
 
 						//draw the hitmark
-						Main.spriteBatch.Draw(text, npc.Center - Main.screenPosition, null, color, 
+						Main.spriteBatch.Draw(text, npc.Center + (npc.velocity*LaserConfig.get.laserEnemyPredict) - Main.screenPosition, null, color, 
 						MathHelper.ToRadians(Main.GameUpdateCount)*1.5f, text.Size()/2f, scale, SpriteEffects.None, 0);
 
 						//end
@@ -146,7 +160,19 @@ namespace LaserSightNew
 					}
 
 					// start with blendstate.additive abuse
-					Main.spriteBatch.Begin (SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+					if (LaserConfig.get.laserDye != null && LaserConfig.get.laserDye.Type > 1) {
+						var shader = GameShaders.Armor.GetShaderIdFromItemId(LaserConfig.get.laserDye.Type);
+						if (shader != null) {
+							Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+							GameShaders.Armor.Apply(shader, player, null);
+						}
+						else {
+							Main.spriteBatch.Begin (SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);	
+						}
+					}
+					else {
+						Main.spriteBatch.Begin (SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+					}
 
 					//setup some variable
 					Vector2 endPoint = player.Center;
@@ -317,6 +343,15 @@ namespace LaserSightNew
 		[DefaultValue(true)]
 		public bool laserEnemy;
 
+
+		[Label("Laser Aim Prediction")]
+		[Tooltip("The intensity of aim lock predict enemy movement\nmay not work with some enemy that has custom movement")]
+		[Range(0, 10)]
+		[Increment(1)]
+		[DefaultValue(0)]
+		[Slider] 
+		public int laserEnemyPredict;
+
 		[Label("Laser Light")]
 		[Tooltip("Make laser emmit light")]
 		[DefaultValue(true)]
@@ -331,6 +366,10 @@ namespace LaserSightNew
 		[Tooltip("Show laser only when player using a sniper scope")]
 		[DefaultValue(false)]
 		public bool laserScope;
+
+		[Label("Laser Dye")]
+		[Tooltip("The laser custom dye usage\nMust be a valid dye !")]
+		public ItemDefinition laserDye = new ItemDefinition("Terraria GoldOre");
 
 		[Label("Laser Color")]
 		[Tooltip("The color of the laser")]
