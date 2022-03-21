@@ -12,6 +12,7 @@ raydeejay (Author) - author of the original mod, this mod wouldn't exist if it w
 Starlight river ( Mod ) - for code reference
 
 Changelog:
+0.5 - Added auto aim  ( toggle and hold key ) and also dead player cant show laser now 
 0.4 - Added config , new icon , added tile and enemy collison , added Laser Enemy Indicator
 0.3 - Laser now extends further
 0.2 - Added Configs. & Mod Icon

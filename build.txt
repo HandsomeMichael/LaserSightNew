@@ -1,6 +1,6 @@
 displayName = Laser Sight (New)
 author = Lasthue (Neko), raydeejay, UsodaKanpeki
-version = 0.4
+version = 0.5
 includeSource = true
 includePDB = true
 hideCode = false
