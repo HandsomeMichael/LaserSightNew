@@ -511,7 +511,8 @@ namespace LaserSightNew
 			Marker09,
 			Marker10,
 			Marker11,
-			Marker12
+			Marker12,
+			Marker13
 		}
 		
 		internal class TextureElement : ConfigElement

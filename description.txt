@@ -12,6 +12,12 @@ raydeejay (Author) - author of the original mod, this mod wouldn't exist if it w
 Starlight river ( Mod ) - for code reference
 
 Changelog:
+0.6.1 - fixed bugs and new target mark texture
+0.6 - Added some options
+      - Custom target-mark textures
+      - Separate color option for target-mark, has option to share color with laser
+      - Laser Collision Type (NPCs & Tiles, Tiles Only, and No Collision)
+      - Changed string texts
 0.5 - Added auto aim  ( toggle and hold key ) and also dead player cant show laser now and shader 
 0.4 - Added config , new icon , added tile and enemy collison , added Laser Enemy Indicator
 0.3 - Laser now extends further
