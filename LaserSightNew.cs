@@ -184,8 +184,11 @@ namespace LaserSightNew
 						scale += 0.3f;
 
 						//draw the hitmark
+						float rot = MathHelper.ToRadians(Main.GameUpdateCount)*1.5f;
+						if (!LaserConfig.get.markerSpin) {rot = 0f;}
+						if (!LaserConfig.get.markerPulse) {scale = 1f;}
 						Main.spriteBatch.Draw(texture, npc.Center + (npc.velocity*LaserConfig.get.laserEnemyPredict) - Main.screenPosition, null, colorB, 
-						MathHelper.ToRadians(Main.GameUpdateCount)*1.5f, texture.Size()/2f, scale, SpriteEffects.None, 0);
+						rot, texture.Size()/2f, scale, SpriteEffects.None, 0);
 
 						//end
 						Main.spriteBatch.End();
@@ -467,6 +470,16 @@ namespace LaserSightNew
 		[DefaultValue(TextureEnum.Marker12)]
 		[Tooltip("Texture for Target-Marker\n(Default: Marker12)")]
 		public TextureEnum markerTexture;
+
+		[Label("Target-Marker Animate: Spin")]
+		[Tooltip("Allow the marker to spin")]
+		[DefaultValue(true)]
+		public bool markerSpin;
+		
+		[Label("Target-Marker Animate: Pulse")]
+		[Tooltip("Allow the marker to pulse")]
+		[DefaultValue(true)]
+		public bool markerPulse;
 		
 		[Label("Smooth Texture")]
 		[Tooltip("Make the target-marker uses smooth texture")]
