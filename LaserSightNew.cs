@@ -24,12 +24,16 @@ namespace LaserSightNew
 		internal static ModHotKey ToggleKey;
 		internal static ModHotKey ToggleAimKey;
 		internal static ModHotKey AimKey;
+		internal static ModHotKey QuickEnemy;
+		internal static ModHotKey ToggleQuickEnemy;
 		
 		public override void Load ()
 		{
             ToggleKey = RegisterHotKey("Quick Toggle Laser", "P");
 			ToggleAimKey = RegisterHotKey("Quick Toggle Lock-On Aiming", "T");
 			AimKey = RegisterHotKey("Quick Lock-On Aiming", "Y");
+			QuickEnemy = RegisterHotKey("Quick Lock-On Nearest Enemy", "K");
+			ToggleQuickEnemy = RegisterHotKey("Quick Toggle Lock-On Nearest Enemy", "L");
 		}
 		public override void PostSetupContent() {
 			var obama = ModLoader.GetMod("ObamaCamera");
@@ -44,6 +48,8 @@ namespace LaserSightNew
 			AimKey = null;
 			ToggleKey = null;
 			ToggleAimKey = null;
+			QuickEnemy = null;
+			ToggleQuickEnemy = null;
 		}
 	}
 	
@@ -51,6 +57,7 @@ namespace LaserSightNew
 	{
 		public static bool Aim;
 		public static bool AutoAim = false;
+		public static bool HACKSREPORTED = false;
 		public override void ProcessTriggers (TriggersSet triggersSet)
 		{
 			Aim = false;
@@ -64,6 +71,34 @@ namespace LaserSightNew
 			{
 				AutoAim = !AutoAim;
 				CombatText.NewText(player.getRect(),(AutoAim ? Color.LightGreen : Color.Pink),(AutoAim ? "Lock-On Aiming Enabled" : "Lock-On Aiming Disabled"));
+			}
+			if (LaserSightNew.ToggleQuickEnemy.JustPressed)
+			{
+				HACKSREPORTED = !HACKSREPORTED;
+				CombatText.NewText(player.getRect(),(HACKSREPORTED ? Color.LightGreen : Color.Pink),(HACKSREPORTED ? "Lock-On Nearest Enemy Enabled" : "Lock-On Nearest Enemy Disabled"));
+			}
+			if (LaserSightNew.QuickEnemy.JustPressed || HACKSREPORTED) {
+				int index = -1;
+				Vector2 targetCenter = player.Center;
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					NPC npc = Main.npc[i];
+					if (npc.CanBeChasedBy()) {
+						float between = Vector2.Distance(npc.Center, player.Center);
+						bool closest = Vector2.Distance(player.Center, targetCenter) > between;
+						bool inRange = between < 700f;
+						bool lineOfSight = Collision.CanHitLine(player.Center, 1, 1, npc.position, npc.width, npc.height);
+						bool closeThroughWall = between < 100f;
+						if ((closest || index == -1) && inRange && (lineOfSight || closeThroughWall)) {
+							targetCenter = npc.Center;
+							index = i;
+						}
+					}
+				}
+				if (index != -1) {
+					LaserSight.hitmark = index;
+					if (!AutoAim) {AutoAim = true;}
+				}
+				
 			}
 			if (LaserSightNew.AimKey.Current || AutoAim) {
 				if (LaserSight.hitmark != -1) {
@@ -146,7 +181,7 @@ namespace LaserSightNew
 					// if npc is gone , set hitmark to -1 
 					if (hitmark > -1) {
 						NPC npc = Main.npc[hitmark];
-						if (!npc.active || npc.dontTakeDamage || npc.townNPC) {
+						if (!npc.active || npc.dontTakeDamage || npc.townNPC || npc.friendly ||  npc.damage == 0 || npc.lifeMax < 5) {
 							hitmark = -1;
 						}
 					}
@@ -255,7 +290,7 @@ namespace LaserSightNew
 							for (int i = 0; i < Main.maxNPCs; i++)
 							{
 								NPC npc = Main.npc[i];
-								if (npc.active && !npc.townNPC && !npc.friendly) {
+								if (npc.active && !npc.townNPC && !npc.friendly && npc.damage > 0 && npc.lifeMax > 5) {
 									float between = Vector2.Distance(npc.Center, laserStart);
 									bool closest = Vector2.Distance(laserStart, endPoint) > between;
 									var targetHitbox = npc.Hitbox;
@@ -263,6 +298,7 @@ namespace LaserSightNew
 									// let collison do all the magic , honestly i dont even know how does this work without destroying frame rate
 									bool collide = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), laserStart,endPoint, 5, ref point);
 									if ((closest || b == -1 ) && collide) {
+										Main.NewText(npc.FullName+" is friendly ? "+npc.friendly);
 										b = i;
 										if (LaserConfig.get.laserCollision == "NPCs & Tiles") {endPoint = npc.Center;}
 										if (LaserConfig.get.laserEnemy) {
