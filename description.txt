@@ -1,25 +1,32 @@
 This mod is a descendant of an original mod with the same name with same features
 
-This mod adds a laser sight, which draws a line between character and mouse cursor
+This mod adds a customizable laser sight, which draws a line between character and mouse cursor that collide with tiles and npcs, this mod also add a marker that makes you auto aim the enemy (these features can be toggled or disabled)
 
 The difference between this and the original mod is the different use of draw method, and has a configuration rather than a command
 
 Recommended mods to pair with this: [Terraria Overhaul] or [Daiyousei's Smooth Animations], could also be both
 
+This mod is open source, you can find the link in the homepage
+
+There is a mod config that lets you customize stuffs
+
 Credits:
-Lasthue (Neko)     - for the code and ideas he gave, thank you so much!
-raydeejay (Author) - author of the original mod, this mod wouldn't exist if it weren't for him
-Starlight river ( Mod ) - for code reference
+UsodaKanpeki            - created the mod
+Lasthue (Neko)          - for the code and ideas he gave, thank you so much!
+raydeejay (Author)      - author of the original mod, this mod wouldn't exist if it weren't for him
+Starlight river (Mod)   - for code reference
 
 Changelog:
+0.6.4 - minor bug fix: removed 'friendly?' debug text
+0.6.3 - mod released publicly
 0.6.2 - added 'Lock-On Nearest Enemy', fixed bugs with critters getting targetted
 0.6.1 - fixed bugs and new target mark texture
-0.6 - Added some options
+0.6   - Added more options
       - Custom target-mark textures
       - Separate color option for target-mark, has option to share color with laser
       - Laser Collision Type (NPCs & Tiles, Tiles Only, and No Collision)
       - Changed string texts
-0.5 - Added auto aim  ( toggle and hold key ) and also dead player cant show laser now and shader 
+0.5 - Added auto-aim  (toggle and hold key) and also dead player cant show laser now and shader 
 0.4 - Added config , new icon , added tile and enemy collison , added Laser Enemy Indicator
 0.3 - Laser now extends further
 0.2 - Added Configs. & Mod Icon

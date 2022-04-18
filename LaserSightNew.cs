@@ -298,7 +298,6 @@ namespace LaserSightNew
 									// let collison do all the magic , honestly i dont even know how does this work without destroying frame rate
 									bool collide = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), laserStart,endPoint, 5, ref point);
 									if ((closest || b == -1 ) && collide) {
-										Main.NewText(npc.FullName+" is friendly ? "+npc.friendly);
 										b = i;
 										if (LaserConfig.get.laserCollision == "NPCs & Tiles") {endPoint = npc.Center;}
 										if (LaserConfig.get.laserEnemy) {

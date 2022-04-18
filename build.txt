@@ -1,7 +1,6 @@
 displayName = Laser Sight (New)
 author = Lasthue (Neko), raydeejay, UsodaKanpeki
-version = 0.6.2
+version = 0.6.4
+homepage = https://forums.terraria.org/index.php?threads/laser-sight-new.111801/
 includeSource = true
 includePDB = true
-hideCode = false
-hideResources = false
